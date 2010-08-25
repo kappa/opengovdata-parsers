@@ -1,23 +1,21 @@
 #! /usr/bin/perl
-use uni::perl;
+use strict;
+use warnings;
 
-use URI;
 use Encode;
 use Web::Scraper;
-use Data::Dump;
 use Text::CSV_XS;
 use LWP::UserAgent;
 use HTTP::Request::Common;
 use HTML::Form;
 use Encode;
-use autodie;
-use signatures;
 
 my $DEBUG = 0;
 
-sub get_page($req) {
+sub get_page {
+    my $req = shift;
     my $delay = 1;
-    state $ua;
+    our $ua;
     unless (defined $ua) {
         $ua = LWP::UserAgent->new();
         $ua->show_progress(1) if $DEBUG;
@@ -45,6 +43,10 @@ my $unfair_scraper = scraper {
     process '//table[@class="form"]/tr/td[2]', 'values[]' => 'TEXT',
 };
 
+my $unfair_headers_scraper = scraper {
+    process '//table[@class="form"]/tr/td[1][not(@colspan="2")]', 'values[]' => 'TEXT',
+};
+
 my @ids = ();
 my $page = get_page(GET $url);
 my ($total) = ($page =~ m{<span id="ctl00_phWorkZone_rnpList_datapgr_lblRecNumAll">(\d+)</span>});
@@ -60,23 +62,29 @@ while ($total - $from > 500) {
     push @ids, @{$unfair_list_scraper->scrape($page)->{ids}};
 
     $form = HTML::Form->parse($page, $url);
+    print ".";
 }
 
-say "we have " . scalar @ids . " entries";
+print "we have " . scalar @ids . " entries\n";
 
 my $csv = Text::CSV_XS->new({ binary => 1 });
 open my $file, '>:utf8', 'output.csv';
 
+my $have_headers;
+
 for my $id (@ids) {
+    unless ($have_headers) {
+        my @headers = @{$unfair_headers_scraper->scrape(get_page(GET "${url}RNPCard.aspx?id=$id"))->{values}};
+        $csv->print($file, \@headers);
+        print $file "\n";
+        $have_headers++;
+    }
+
     my @fields = @{$unfair_scraper->scrape(get_page(GET "${url}RNPCard.aspx?id=$id"))->{values}};
     $csv->print($file, \@fields);
     print $file "\n";
     print ".";
 }
-say;
+print "\n";
 
 close $file;
-
-__END__
-todo:
-2. no headers

@@ -1,0 +1,3 @@
+Parser for http://rnp.fas.gov.ru/ data on unfair vendors
+
+Requires perl, Web::Scraper, Text::CSV_XS.
