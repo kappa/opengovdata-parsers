@@ -9,7 +9,6 @@ use Text::CSV_XS;
 use LWP::UserAgent;
 use HTTP::Request::Common;
 use HTML::Form;
-use List::MoreUtils qw/uniq/;
 use Encode;
 use autodie;
 use signatures;
@@ -50,23 +49,18 @@ my @ids = ();
 my $page = get_page(GET $url);
 my ($total) = ($page =~ m{<span id="ctl00_phWorkZone_rnpList_datapgr_lblRecNumAll">(\d+)</span>});
 my $from = 0;
+my $form = HTML::Form->parse($page, $url);
 
 $|++;
 while ($total - $from > 500) {
-    print ".";
-    my $form = HTML::Form->parse($page, $url);
-
-    $from = $form->param('ctl00$phWorkZone$rnpList$datapgr$tbRecNumFrom');
-
-    @ids and $form->param('ctl00$phWorkZone$rnpList$datapgr$tbRecNumFrom', scalar @ids);
+    @ids and $form->param('ctl00$phWorkZone$rnpList$datapgr$tbRecNumFrom', $from = scalar @ids + 1);
     $form->param('ctl00$phWorkZone$rnpList$datapgr$ddlVolume', 500);
 
     $page = get_page($form->click);
     push @ids, @{$unfair_list_scraper->scrape($page)->{ids}};
-}
 
-# APS.NET forms are crazy, we get duplicate ids on first iterations
-@ids = uniq sort @ids;
+    $form = HTML::Form->parse($page, $url);
+}
 
 say "we have " . scalar @ids . " entries";
 
@@ -85,7 +79,4 @@ close $file;
 
 __END__
 todo:
-1. resulting CSV contains " and is not valid
 2. no headers
-3. CSV is not sorted
-4. Parsing is not incremental
