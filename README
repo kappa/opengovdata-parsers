@@ -1,3 +1,7 @@
 Parser for http://rnp.fas.gov.ru/ data on unfair vendors
 
 Requires perl, Web::Scraper, Text::CSV_XS.
+
+Very easy installation of dependencies under Linux or Mac OS X:
+
+% wget -O - http://cpanmin.us | perl - --sudo Web::Scraper Text::CSV_XS
