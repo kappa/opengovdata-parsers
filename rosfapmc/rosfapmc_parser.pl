@@ -1,18 +1,17 @@
 #! /usr/bin/perl
 use strict;
 use warnings;
-use 5.10.0;
 use utf8;
 
 use Encode;
 use Text::CSV_XS;
 use LWP::UserAgent;
 use HTTP::Request::Common;
-use Encode;
-use autodie;
 use File::Temp qw/tempfile/;
+use File::Spec;
 
-my $DEBUG = 0;
+grep { -x File::Spec->join($_, 'catdoc') } File::Spec->path
+    or die "`catdoc' executable not found in $ENV{PATH}, try installing `catdoc' package\n";
 
 my %sources = (
     'Перечень получателей господдержки в сфере периодической печати, осуществляющих реализацию социально значимых проектов в 2009 году'
@@ -35,7 +34,6 @@ sub get_page {
     our $ua;
     unless (defined $ua) {
         $ua = LWP::UserAgent->new();
-        $ua->show_progress(1) if $DEBUG;
     }
 
     my $resp;
