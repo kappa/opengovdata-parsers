@@ -60,7 +60,11 @@ for my $doc (keys %sources) {
 
     for my $row (@rows) {
         next if $row =~ /PAGE\s+\d+/ && $row !~ /[а-я]/i;  # ending lines
-        $csv->print($csv_fh, [map { s/\s+/ /sg; s/HYPERLINK "[^"]+"//g; $_ eq ' ' ? () : ($_) } split /&/, $row]);
+
+        my @cols = map { s/\s+/ /sg; s/HYPERLINK "[^"]+"//g; $_ eq ' ' ? () : ($_) } split /&/, $row;
+        next if @cols < 2;
+
+        $csv->print($csv_fh, \@cols);
         print $csv_fh "\n";
     }
     close $csv_fh;
