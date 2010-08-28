@@ -1,3 +1,16 @@
+A set of russian government data parsers.
+
+Most of the data published are available only in human-readable
+formats, like HTML or Microsoft Word, hence the need for special
+parsers.
+
+See http://opengovdata.ru
+
+We have:
+
+========
+rnpfas_parser.pl
+========
 Parser for http://rnp.fas.gov.ru/ data on unfair vendors
 
 Requires perl, Web::Scraper, Text::CSV_XS.
@@ -5,3 +18,5 @@ Requires perl, Web::Scraper, Text::CSV_XS.
 Very easy installation of dependencies under Linux or Mac OS X:
 
 % wget -O - http://cpanmin.us | perl - --sudo Web::Scraper Text::CSV_XS
+
+========

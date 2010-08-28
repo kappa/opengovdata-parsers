@@ -68,7 +68,7 @@ while ($total - $from > 500) {
 print "we have " . scalar @ids . " entries\n";
 
 my $csv = Text::CSV_XS->new({ binary => 1 });
-open my $file, '>:utf8', 'output.csv';
+open my $file, '>:utf8', 'rnpfas_output.csv';
 
 my $have_headers;
 
