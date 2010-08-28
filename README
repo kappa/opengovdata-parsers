@@ -8,15 +8,22 @@ See http://opengovdata.ru
 
 We have:
 
-========
-rnpfas_parser.pl
-========
+======== rnpfas ========
 Parser for http://rnp.fas.gov.ru/ data on unfair vendors
 
 Requires perl, Web::Scraper, Text::CSV_XS.
 
 Very easy installation of dependencies under Linux or Mac OS X:
-
 % wget -O - http://cpanmin.us | perl - --sudo Web::Scraper Text::CSV_XS
 
-========
+======== rosfapmc ========
+Parser for data on media receiving state subsidies
+available here: http://www.fapmc.ru/support/recipientsofstate/
+
+Requires perl, catdoc, Text::CSV_XS.
+
+Very easy installation of Perl dependencies under Linux or Mac OS X:
+% wget -O - http://cpanmin.us | perl - --sudo Text::CSV_XS
+
+catdoc package is usually available on your Linux packages repository.
+Try `sudo apt-get install catdoc'.
