@@ -20,10 +20,10 @@ Very easy installation of dependencies under Linux or Mac OS X:
 Parser for data on media receiving state subsidies
 available here: http://www.fapmc.ru/support/recipientsofstate/
 
-Requires perl, catdoc, Text::CSV_XS, lwp-perl.
+Requires perl, antiword, Text::CSV_XS, XML::LibXML, lwp-perl.
 
 Very easy installation of Perl dependencies under Linux or Mac OS X:
 % wget -O - http://cpanmin.us | perl - --sudo Text::CSV_XS LWP::UserAgent
 
-catdoc package is usually available on your Linux packages repository.
-Try `sudo apt-get install catdoc'.
+antiword package is usually available on your Linux packages repository.
+Try `sudo apt-get install antiword'.

@@ -9,9 +9,10 @@ use LWP::UserAgent;
 use HTTP::Request::Common;
 use File::Temp qw/tempfile/;
 use File::Spec;
+use XML::LibXML;
 
-grep { -x File::Spec->join($_, 'catdoc') } File::Spec->path
-    or die "`catdoc' executable not found in $ENV{PATH}, try installing `catdoc' package\n";
+grep { -x File::Spec->join($_, 'antiword') } File::Spec->path
+    or die "`antiword' executable not found in $ENV{PATH}, try installing `antiword' package\n";
 
 my %sources = (
     'Перечень получателей господдержки в сфере периодической печати, осуществляющих реализацию социально значимых проектов в 2009 году'
@@ -55,20 +56,17 @@ for my $doc (keys %sources) {
     my ($year) = $doc =~ /(\d{4})/ or warn "No year in [$doc], skipping\n", next;
     open my $csv_fh, '>:utf8', $year . ($doc =~ /периодич/ ? '_periodic' : '_electronic') . '.csv';
 
-    my @rows = split /\\\\/, decode('utf-8', `catdoc -dutf8 -t $doc_filename`);
-    shift @rows;    # skip headers and blabla
+    my @rows = XML::LibXML->load_xml(string => decode('utf-8', `antiword -x db $doc_filename`))->findnodes('//tbody/row');
+    shift @rows;    # skip headers
 
     for my $row (@rows) {
-        next if $row =~ /PAGE\s+\d+/ && $row !~ /[а-я]/i;  # ending lines
-
         my @cols = map {
             s/[ \t]+/ /g;
             s/[ \t]*\n+[ \t]*/\n/g;
             s/^\n//; s/\n\z//g;
-            s/HYPERLINK "[^"]+"//g;
 
             $_ eq ' ' ? () : ($_)
-        } split /&/, $row;
+        } map { $_->textContent() } $row->nonBlankChildNodes();
         next if @cols < 2;
 
         $csv->print($csv_fh, \@cols);
