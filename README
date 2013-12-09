@@ -27,3 +27,10 @@ Very easy installation of Perl dependencies under Linux or Mac OS X:
 
 antiword package is usually available on your Linux packages repository.
 Try `sudo apt-get install antiword'.
+
+======== fedspisok ========
+Parser for Federal List of Extremist Materials
+available here: http://minjust.ru/ru/extremist-materials
+
+Requires python, feedparser
+
